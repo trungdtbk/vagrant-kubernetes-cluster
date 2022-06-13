@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-master_node=172.16.8.10
+master_node=172.16.8.252
 pod_network_cidr=192.168.0.0/16
 
 initialize_master_node ()

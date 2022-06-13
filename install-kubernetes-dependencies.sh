@@ -1,5 +1,6 @@
 #!/bin/bash -e
 
+NUM_WORKER_NODES=${1:-2}
 
 install_required_packages ()
 {
@@ -14,10 +15,12 @@ sudo apt-mark hold kubelet kubeadm kubectl
 
 configure_hosts_file ()
 {
-sudo tee /etc/hosts<<EOF
-172.16.8.10 master
-172.16.8.11 node-01
-EOF
+    echo "Setting up /etc/hosts"
+    echo "127.0.0.1 localhost" | sudo tee /etc/hosts
+    echo "172.16.8.252 master" | sudo tee -a /etc/hosts
+    for i in $(seq "$NUM_WORKER_NODES"); do
+        echo "172.16.8.$i node$i" | sudo tee -a /etc/hosts
+    done
 }
 
 disable_swap () 

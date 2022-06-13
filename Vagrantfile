@@ -1,17 +1,25 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-MASTER_IP       = "172.16.8.10"
-NODE_01_IP      = "172.16.8.11"
+MASTER_IP       = "172.16.8.252"
+NODE_IP_SUBNET  = "172.16.8"
+
+KUBE_NUM_WORKERS = ENV['KUBE_NUM_WORKERS'] || 2
+MASTER_CPU = 1
+MASTER_MEM = 2048
+WORKER_CPU = 1
+WORKER_MEM = 1024
 
 Vagrant.configure("2") do |config|
   config.vm.box = "geerlingguy/ubuntu2004"
   config.vm.box_version = "1.0.3"
 
-  boxes = [
-    { :name => "master",  :ip => MASTER_IP,  :cpus => 1, :memory => 2048 },
-    { :name => "node-01", :ip => NODE_01_IP, :cpus => 1, :memory => 2048 },
-  ]
+  boxes = Array.new
+  boxes.push({ :name => "master", :ip => MASTER_IP, :cpus => MASTER_CPU, :memory => MASTER_MEM })
+
+  for i in 1..KUBE_NUM_WORKERS do 
+    boxes.push({ :name => "node#{i}", :ip => "#{NODE_IP_SUBNET}.#{i}", :cpus => WORKER_CPU, :memory => WORKER_MEM })
+  end
 
   boxes.each do |opts|
     config.vm.define opts[:name] do |box|
@@ -22,11 +30,10 @@ Vagrant.configure("2") do |config|
         vb.cpus = opts[:cpus]
         vb.memory = opts[:memory]
       end
-      box.vm.provision "shell", path:"./install-kubernetes-dependencies.sh"
+      box.vm.provision "shell", path:"./install-kubernetes-dependencies.sh", args: "#{KUBE_NUM_WORKERS}"
       if box.vm.hostname == "master" then 
         box.vm.provision "shell", path:"./configure-master-node.sh"
-        end
-      if box.vm.hostname == "node-01" then ##TODO: create some regex to match worker hostnames
+      else
         box.vm.provision "shell", path:"./configure-worker-nodes.sh"
       end
 
