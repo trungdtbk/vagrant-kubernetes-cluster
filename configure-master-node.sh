@@ -33,6 +33,10 @@ install_network_cni ()
 kubectl apply -f /vagrant/kube-flannel.yml
 }
 
+install_helm () {
+  curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+}
+
 initialize_master_node
 configure_kubectl
 install_network_cni
