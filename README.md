@@ -18,6 +18,10 @@ After creation of VMs is complete ssh into master and check kubernetes cluster s
 
 `vagrant ssh master`
 
+If in Windows:
+
+`powershell -command "vagrant up"` and `powershell -command "vagrant ssh master"`
+
 `kubectl get nodes`
 
 To check your kubernetes cluster, you can create an nginx deployment and expose it (from port 30080) with
