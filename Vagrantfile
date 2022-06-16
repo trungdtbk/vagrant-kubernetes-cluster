@@ -19,7 +19,7 @@ Vagrant.configure("2") do |config|
   boxes.push({ :name => "master", :ip => MASTER_IP, :cpus => MASTER_CPU, :memory => MASTER_MEM })
 
   for i in 1..KUBE_NUM_WORKERS do 
-    boxes.push({ :name => "node#{i}", :ip => "#{NODE_IP_SUBNET}.#{i}", :cpus => WORKER_CPU, :memory => WORKER_MEM })
+    boxes.push({ :name => "node#{i}", :ip => "#{NODE_IP_SUBNET}.#{i+100}", :cpus => WORKER_CPU, :memory => WORKER_MEM })
   end
 
   boxes.each do |opts|
